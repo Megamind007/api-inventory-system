@@ -2,9 +2,9 @@ spring:
   application:
     name: api-inventory-system
   datasource:
-    url:
-    username:
-    password:
+    url: jdbc:postgresql://localhost:5432/inventory_system_db
+    username: postgres
+    password: 2003
   jpa:
     hibernate:
       ddl-auto: update
