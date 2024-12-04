@@ -1,5 +1,4 @@
 package org.example.apiinventorysystem.controller;
-
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.example.apiinventorysystem.model.request.ProductRequest;
@@ -8,7 +7,6 @@ import org.example.apiinventorysystem.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 
 @RequestMapping("/api/v1/products")

@@ -16,6 +16,7 @@ public class ProductResponse {
 	private String image;
 	private String description;
 	private Double unitPrice;
+	private Integer quantity;
 	private LocalDate importedAt;
 	private LocalDate expiredAt;
 }

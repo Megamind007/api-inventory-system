@@ -14,7 +14,8 @@ public class ProductRequest {
 	private String image;
 	private Double unitPrice;
 	private String description;
+	private Integer quantity;
 	public Product toEntity(){
-		return Product.builder().name(name).image(image).unitPrice(unitPrice).description(description).build();
+		return Product.builder().name(name).image(image).unitPrice(unitPrice).description(description).quantity(quantity).build();
 	}
 }
