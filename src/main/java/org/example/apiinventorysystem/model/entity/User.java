@@ -1,4 +1,5 @@
 package org.example.apiinventorysystem.model.entity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @ToString
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +28,5 @@ public class User {
 	private List<Order> orders;
 	private LocalDate createdAt;
 	private LocalDate updatedAt;
+
 }

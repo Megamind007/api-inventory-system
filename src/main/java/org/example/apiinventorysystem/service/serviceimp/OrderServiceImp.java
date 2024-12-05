@@ -1,6 +1,7 @@
 package org.example.apiinventorysystem.service.serviceimp;
 
 import lombok.RequiredArgsConstructor;
+import org.example.apiinventorysystem.enums.PaymentStatus;
 import org.example.apiinventorysystem.model.entity.Order;
 import org.example.apiinventorysystem.model.entity.OrderProduct;
 import org.example.apiinventorysystem.model.entity.Product;
@@ -15,10 +16,11 @@ import org.example.apiinventorysystem.repository.UserRepository;
 import org.example.apiinventorysystem.service.OrderService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @RequiredArgsConstructor
@@ -31,42 +33,53 @@ public class OrderServiceImp implements OrderService {
 
 	@Override
 	public OrderResponse createOrder(List<OrderRequest> orderRequest) {
-		OrderResponse orderResponse = new OrderResponse();
-		Optional<User> user = userRepository.findById(1);
-		orderRequest.forEach(i -> {
-			// find product
-			Product product = productRepository.findById(i.getProductId()).orElse(null);
-			assert product != null;
-			// order
-			Order order = new Order();
-			order.setStatus(false);
-			order.setOrderDate(LocalDate.now());
-			order.setUser(user.get());
-			order = orderRepository.save(order);
+		User user = userRepository.findById(1).orElse(null);
+		List<OrderProductResponse> orderProductResponse = new ArrayList<>();
+		//order
+		Order order = orderRepository.save(Order.builder()
+				.status(PaymentStatus.PENDING)
+				.orderDate(LocalDate.now())
+				.build());
+		AtomicReference<Double> totalAmount = new AtomicReference<>(0.0);
+		orderRequest.forEach(req -> {
+			Product pro = productRepository.findById(req.getProductId()).orElse(null);
+			assert pro != null;
+			if (pro.getStock() < req.getQuantity()) {
+				throw new RuntimeException("Stock is too small");
+			}
 			// order product
-			OrderProduct op = new OrderProduct();
-			op.setOrderQuantity(i.getQuantity());
-			op.setProduct(product);
-			op.setOrder(order);
-			op.setProduct(product);
-			op = orderProductRepository.save(op);
+			OrderProduct orderProduct = OrderProduct.builder()
+					.product(pro)
+					.order(order)
+					.quantity(req.getQuantity())
+					.build();
+			orderProductRepository.save(orderProduct);
 
-			List<OrderProductResponse> lst = new ArrayList<>();
+			double total = pro.getUnitPrice() * req.getQuantity();
+			totalAmount.updateAndGet(v -> v + total);
 
-			OrderProductResponse opr = new OrderProductResponse();
-			opr.setName(product.getName());
-			opr.setQuantity(i.getQuantity());
-			opr.setUnitPrice(product.getUnitPrice());
+			// product
+			pro.setStock(pro.getStock() - req.getQuantity());
+			productRepository.save(pro);
 
-			opr.setTotalAmount(i.getQuantity()*product.getUnitPrice());
-			lst.forEach(data->{
-				lst.add(data);
-			});
-			orderResponse.setUser(modelMapper.map(user, User.class));
-			orderResponse.setTotalPrice(opr.getTotalAmount());
-			orderResponse.setProducts(lst);
+			// set product response
+			orderProductResponse.add(OrderProductResponse.builder()
+					.name(pro.getName())
+					.quantity(req.getQuantity())
+					.unitPrice(pro.getUnitPrice())
+					.totalAmount(total)
+					.build());
 		});
-	
-		return orderResponse;
+		order.setTotalPrice(totalAmount.get());
+		orderRepository.save(order);
+		//set response
+		return OrderResponse.builder()
+				.id(order.getId())
+				.status(order.getStatus())
+				.orderDate(order.getOrderDate())
+				.totalPrice(order.getTotalPrice())
+				.products(orderProductResponse)
+				.user(user)
+				.build();
 	}
 }

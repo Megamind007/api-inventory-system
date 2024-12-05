@@ -2,6 +2,7 @@ package org.example.apiinventorysystem.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.example.apiinventorysystem.model.request.ProductRequest;
+import org.example.apiinventorysystem.model.request.StockRequest;
 import org.example.apiinventorysystem.model.response.ApiResponse;
 import org.example.apiinventorysystem.service.ProductService;
 import org.springframework.http.HttpStatus;
@@ -75,5 +76,18 @@ public class ProductController {
 	public ResponseEntity<?> addProductToCategory(@PathVariable Integer productId, @PathVariable Integer categoryId) {
 		productService.addProductToCategory(productId,categoryId);
 		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@PutMapping
+	@Operation(summary = "Add stock product")
+	public ResponseEntity<?> addProductToStock(@RequestBody StockRequest stockRequest) {
+		ApiResponse<?> response = ApiResponse.builder()
+				.message("Get all product successful")
+				.payload(productService.addProductToStock(stockRequest))
+				.status(HttpStatus.OK)
+				.statusCode(HttpStatus.OK.value())
+				.timestamp(LocalDateTime.now())
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

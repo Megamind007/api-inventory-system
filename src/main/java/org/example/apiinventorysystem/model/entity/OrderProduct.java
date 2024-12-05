@@ -1,6 +1,4 @@
 package org.example.apiinventorysystem.model.entity;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +18,6 @@ public class OrderProduct {
 	@ManyToOne
 	@JoinColumn(name = "product_id")
 	private Product product;
-	private Integer orderQuantity;
+	private Integer quantity;
 }
 

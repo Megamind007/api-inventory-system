@@ -1,7 +1,8 @@
 package org.example.apiinventorysystem.model.response;
 import lombok.*;
+import org.example.apiinventorysystem.enums.PaymentStatus;
+import org.example.apiinventorysystem.model.entity.Order;
 import org.example.apiinventorysystem.model.entity.User;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @ToString
 public class OrderResponse {
 	private Integer id;
-	private Boolean status;
+	private PaymentStatus status;
 	private Double totalPrice;
 	private LocalDate orderDate;
 	private List<OrderProductResponse> products;

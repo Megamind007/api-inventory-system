@@ -20,13 +20,14 @@ public class Product {
 	private String image;
 	private String description;
 	private Double unitPrice;
-	private Integer quantity;
+	private Integer stock;
+	private LocalDate importedAt;
+	private LocalDate expiredAt;
 	@OneToMany(mappedBy = "product")
 	private List<OrderProduct> orderProducts;
 	@ManyToOne
 	private Category category;
-
 	public ProductResponse toResponse() {
-		return ProductResponse.builder().id(id).name(name).image(image).description(description).unitPrice(unitPrice).quantity(quantity).build();
+		return ProductResponse.builder().id(id).name(name).image(image).description(description).unitPrice(unitPrice).stock(stock).expiredAt(expiredAt).importedAt(LocalDate.now()).build();
 	}
 }

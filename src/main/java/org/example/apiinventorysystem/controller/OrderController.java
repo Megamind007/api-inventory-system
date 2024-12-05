@@ -17,15 +17,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
 	private final OrderService orderService;
+
 	@PostMapping
 	public ResponseEntity<?> createOrder(@RequestBody List<OrderRequest> orderRequest) {
-		ApiResponse<?> response = ApiResponse.builder()
+		return new ResponseEntity<>(ApiResponse.builder()
 				.message("Order product successful")
 				.payload(orderService.createOrder(orderRequest))
 				.status(HttpStatus.CREATED)
 				.statusCode(HttpStatus.CREATED.value())
 				.timestamp(LocalDateTime.now())
-				.build();
-		return new ResponseEntity<>(response, HttpStatus.CREATED);
+				.build(), HttpStatus.CREATED);
 	}
 }

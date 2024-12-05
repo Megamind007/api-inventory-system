@@ -3,6 +3,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.apiinventorysystem.model.entity.Category;
 import org.example.apiinventorysystem.model.entity.Product;
 import org.example.apiinventorysystem.model.request.ProductRequest;
+import org.example.apiinventorysystem.model.request.StockRequest;
 import org.example.apiinventorysystem.model.response.ProductResponse;
 import org.example.apiinventorysystem.repository.CategoryRepository;
 import org.example.apiinventorysystem.repository.ProductRepository;
@@ -62,4 +63,13 @@ public class ProductServiceImp implements ProductService {
 		productRepository.save(product);
 	}
 
+	@Override
+	public ProductResponse addProductToStock(StockRequest stockRequest) {
+		Product product = productRepository.findById(stockRequest.getProductId()).orElse(null);
+		assert product != null;
+		product.setStock(product.getStock()+stockRequest.getStock());
+		product.setExpiredAt(stockRequest.getExpiredAt());
+		productRepository.save(product);
+		return product.toResponse();
+	}
 }
